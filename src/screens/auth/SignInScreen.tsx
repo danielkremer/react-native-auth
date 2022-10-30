@@ -5,6 +5,8 @@ import CustomButton from '../../components/elements/CustomButton';
 import CustomInput from '../../components/elements/CustomInput';
 import Screen from '../../components/elements/Screen';
 import { AuthStackScreenProps } from '../../navigation/types/navigation.types';
+import { signIn } from '../../store/authUser/authUser.slice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { passwordInputRule, usernameInputRule } from '../../utils/helpers';
 
 const SignInScreen: FunctionComponent<AuthStackScreenProps<'signInScreen'>> = ({
@@ -13,9 +15,13 @@ const SignInScreen: FunctionComponent<AuthStackScreenProps<'signInScreen'>> = ({
   const logo = require('../../assets/images/dkm-logo.png');
   const { height } = useWindowDimensions();
   const { control, handleSubmit } = useForm();
+  const dispatch = useAppDispatch();
+  const authLoaded = useAppSelector(
+    ({ authUser }) => authUser.status !== 'loading'
+  );
 
-  const onSingInPressed = () => {
-    navigation.navigate('homeScreen');
+  const onSingInPressed = async (data: any) => {
+    dispatch(signIn({ username: data.username, password: data.password }));
   };
   const onForgotPasswordPressed = () => {
     navigation.navigate('forgotPasswordScreen');
@@ -52,7 +58,7 @@ const SignInScreen: FunctionComponent<AuthStackScreenProps<'signInScreen'>> = ({
         />
 
         <CustomButton
-          text="Sign In"
+          text={authLoaded ? 'Sign In' : 'Loading...'}
           onPress={handleSubmit(onSingInPressed)}
           type="primary"
         />

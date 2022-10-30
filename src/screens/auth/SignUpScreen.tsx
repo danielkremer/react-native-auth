@@ -6,6 +6,8 @@ import CustomInput from '../../components/elements/CustomInput';
 import Screen from '../../components/elements/Screen';
 import SocialSignInButtons from '../../components/elements/SocialSignInButtons';
 import { AuthStackScreenProps } from '../../navigation/types/navigation.types';
+import { signUp } from '../../store/authUser/authUser.slice';
+import { useAppDispatch } from '../../store/hooks';
 import {
   emailInputRule,
   passwordInputRule,
@@ -16,11 +18,23 @@ const SignUpScreen: FunctionComponent<AuthStackScreenProps<'signUpScreen'>> = ({
   navigation,
 }) => {
   const { control, handleSubmit, watch } = useForm();
+  const dispatch = useAppDispatch();
 
   const pwd = watch('password');
 
-  const onRegisterPressed = () => {
-    navigation.navigate('confirmEmailScreen');
+  const onRegisterPressed = async (data: any) => {
+    const { username, password, email, fullName } = data;
+    dispatch(
+      signUp({
+        username,
+        password,
+        attributes: { email, name: fullName, preferred_username: username },
+      })
+    )
+      .unwrap()
+      .then(() => {
+        navigation.navigate('confirmEmailScreen', { username: username });
+      });
   };
   const onTermsOfUsePressed = () => {
     console.warn('onTermsOfUsePressed');
@@ -37,6 +51,12 @@ const SignUpScreen: FunctionComponent<AuthStackScreenProps<'signUpScreen'>> = ({
     <Screen>
       <View style={styles.root}>
         <Text style={styles.title}>Create an account</Text>
+        <CustomInput
+          placeholder="Full name"
+          control={control}
+          name="fullName"
+          rules={usernameInputRule}
+        />
         <CustomInput
           placeholder="Username"
           control={control}

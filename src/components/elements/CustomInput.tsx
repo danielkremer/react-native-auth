@@ -1,9 +1,9 @@
 import React from 'react';
-import { Control, Controller, FieldValues } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 interface IProps {
-  control: Control<FieldValues, any>;
+  control: any;
   name: string;
   rules: object;
   placeholder: string;

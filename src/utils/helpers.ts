@@ -26,8 +26,8 @@ export const passwordInputRule = {
       message: 'Password should be at least 8 characters long',
     },
     maxLength: {
-      value: 12,
-      message: 'Password should be at least 12 characters long',
+      value: 19, 
+      message: 'Password should maximum least 19 characters long',
     },
 }
  

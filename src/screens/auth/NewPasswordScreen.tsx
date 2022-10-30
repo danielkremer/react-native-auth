@@ -5,15 +5,32 @@ import CustomButton from '../../components/elements/CustomButton';
 import CustomInput from '../../components/elements/CustomInput';
 import Screen from '../../components/elements/Screen';
 import { AuthStackScreenProps } from '../../navigation/types/navigation.types';
-import { codeInputRule, passwordInputRule } from '../../utils/helpers';
+import { forgotPasswordSubmit } from '../../store/authUser/authUser.slice';
+import { useAppDispatch } from '../../store/hooks';
+import {
+  codeInputRule,
+  passwordInputRule,
+  usernameInputRule,
+} from '../../utils/helpers';
 
 const NewPasswordScreen: FunctionComponent<
   AuthStackScreenProps<'newPasswordScreen'>
 > = ({ navigation }) => {
   const { control, handleSubmit } = useForm();
+  const dispatch = useAppDispatch();
 
-  const onSubmitPressed = () => {
-    navigation.navigate('homeScreen');
+  const onSubmitPressed = async (data: any) => {
+    dispatch(
+      forgotPasswordSubmit({
+        username: data.username,
+        code: data.code,
+        password: data.password,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        navigation.navigate('signInScreen');
+      });
   };
 
   const onSignInPressed = () => {
@@ -25,6 +42,12 @@ const NewPasswordScreen: FunctionComponent<
       <View style={styles.root}>
         <Text style={styles.title}>Reset your Password</Text>
         <CustomInput
+          placeholder="Username"
+          control={control}
+          name="username"
+          rules={usernameInputRule}
+        />
+        <CustomInput
           placeholder="Code"
           control={control}
           name="code"
@@ -35,6 +58,7 @@ const NewPasswordScreen: FunctionComponent<
           control={control}
           name="password"
           rules={passwordInputRule}
+          secureTextEntry={true}
         />
 
         <CustomButton
